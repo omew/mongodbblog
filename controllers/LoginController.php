@@ -41,8 +41,10 @@ class LoginController extends BaseController
             'status' => 2
         ]);
         var_dump($res);*/
-
-
+        echo 'dsadas';
+        $password='201671zhuang';
+        echo Yii::$app->security->generatePasswordHash($password);
+        exit;
 
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();

@@ -3,7 +3,9 @@
 namespace app\models;
 
 use Yii;
-
+//mongodb activerecord
+use yii\mongodb\ActiveRecord;
+use yii\web\IdentityInterface;
 /**
  * 该类是 user 认证类
  * This is the model class for table "{{%user}}".
@@ -20,7 +22,7 @@ use Yii;
  * @property string $group
  * @property string $authCode
  */
-class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface {
+class User extends ActiveRecord implements IdentityInterface {
 
     /**
      * @inheritdoc
@@ -36,7 +38,6 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface {
             [['name'], 'checkName', 'on' => ['create']],
             [['screenName'], 'checkName', 'skipOnEmpty' => false],
             [['mail'], 'email'],
-            [['url'], 'url'],
             [['mail', 'url'], 'string', 'max' => 200],
             [['name'], 'unique', 'on' => ['create']],
             [['mail', 'screenName'], 'unique'],
@@ -44,9 +45,10 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface {
     }
 
     /**
+     * 表明ac 对应的表明
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function collectionName() {
         return '{{%users}}';
     }
 
@@ -110,8 +112,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface {
 
     /**
      * Generates password hash from password and sets it to the model
-     *
      * @param string $password
+     * @return string
      */
     public function generatePassword($password) {
         return Yii::$app->security->generatePasswordHash($password);
