@@ -1,6 +1,12 @@
 Yii Framework 2 mongodb extension Change Log
 ============================================
 
+2.1.1 under development
+-----------------------
+
+- Bug #136: Fixed `yii\mongodb\Collection::findOne()` returns `false` instead of `null` on empty result (klimov-paul)
+
+
 2.1.0 June 27, 2016
 -------------------
 

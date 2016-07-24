@@ -33,21 +33,21 @@ class LoginController extends BaseController
      */
     public function actionLogin()
     {
-
         //mongodb 实例操作
-/*        $collection = Yii::$app->mongodb->getCollection('customer');
-        $res = $collection->insert([
-            'name' => 'John Smith22',
-            'status' => 2
-        ]);
-        var_dump($res);*/
-        echo 'dsadas';
-        $password='201671zhuang';
-        echo Yii::$app->security->generatePasswordHash($password);
-        exit;
+        /*        $collection = Yii::$app->mongodb->getCollection('customer');
+                $res = $collection->insert([
+                    'name' => 'John Smith22',
+                    'status' => 2
+                ]);
+                var_dump($res);*/
 
+//        $password='';
+//        echo Yii::$app->security->generatePasswordHash($password);
+//        exit;
+//        echo  '<pre>';
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
+//            exit;
         }
         $model = new LoginForm();
         //yii 组件生成的表单元素提交的时候是这样的
@@ -57,8 +57,12 @@ class LoginController extends BaseController
 //        load 对于自定义的表单不能正确 load 详情查看 load 函数定义处   如果是自定义的表单自动 加载属性需要把第二个参数设置为空
         if ($model->load(Yii::$app->request->post(), '') && $model->validateVerifyCode($this->createAction('captcha')->getVerifyCode()) && $model->login()) {
             //获取验证码  然后验证是不是验证码正确与否
-            //也可以使用框架封装好的函数 
+            //也可以使用框架封装好的函数
 //            $this->createAction('captcha')->validate($model->verifyCode, false)
+//            echo '<pre>';
+//            var_dump(Yii::$app->user);
+//            print_r($_SESSION);
+//            exit;
             return $this->goBack();
         }
         $error = $model->errors;
@@ -68,6 +72,8 @@ class LoginController extends BaseController
             $msg_arr = array_values($error);
             $msg = $msg_arr[0][0];
         }
+//        print_r($_SESSION);
+//        exit;
         return $this->renderPartial('login', ['msg' => $msg]);
     }
 

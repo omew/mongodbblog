@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @link http://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
@@ -29,13 +28,12 @@ use Yii;
  * @author Klimov Paul <klimov.paul@gmail.com>
  * @since 2.0
  */
-class Security extends Component {
-
+class Security extends Component
+{
     /**
      * @var string The cipher to use for encryption and decryption.
      */
     public $cipher = 'AES-128-CBC';
-
     /**
      * @var array[] Look-up table of block sizes and key sizes for each supported OpenSSL cipher.
      *
@@ -53,31 +51,26 @@ class Security extends Component {
         'AES-192-CBC' => [16, 24],
         'AES-256-CBC' => [16, 32],
     ];
-
     /**
      * @var string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
      * @see hash_algos()
      */
     public $kdfHash = 'sha256';
-
     /**
      * @var string Hash algorithm for message authentication. Recommend sha256, sha384 or sha512.
      * @see hash_algos()
      */
     public $macHash = 'sha256';
-
     /**
      * @var string HKDF info value for derivation of message authentication key.
      * @see hkdf()
      */
     public $authKeyInfo = 'AuthorizationKey';
-
     /**
      * @var integer derivation iterations count.
      * Set as high as possible to hinder dictionary password attacks.
      */
     public $derivationIterations = 100000;
-
     /**
      * @var string strategy, which should be used to generate password hash.
      * Available strategies:
@@ -88,7 +81,6 @@ class Security extends Component {
      * uses `password_hash()` when available or `crypt()` when not.
      */
     public $passwordHashStrategy;
-
     /**
      * @var integer Default cost used for password hashing.
      * Allowed value is between 4 and 31.
@@ -96,6 +88,7 @@ class Security extends Component {
      * @since 2.0.6
      */
     public $passwordHashCost = 13;
+
 
     /**
      * Encrypts data using a password.
@@ -113,7 +106,8 @@ class Security extends Component {
      * @see decryptByPassword()
      * @see encryptByKey()
      */
-    public function encryptByPassword($data, $password) {
+    public function encryptByPassword($data, $password)
+    {
         return $this->encrypt($data, true, $password, null);
     }
 
@@ -131,7 +125,8 @@ class Security extends Component {
      * @see decryptByKey()
      * @see encryptByPassword()
      */
-    public function encryptByKey($data, $inputKey, $info = null) {
+    public function encryptByKey($data, $inputKey, $info = null)
+    {
         return $this->encrypt($data, false, $inputKey, $info);
     }
 
@@ -142,7 +137,8 @@ class Security extends Component {
      * @return boolean|string the decrypted data or false on authentication failure
      * @see encryptByPassword()
      */
-    public function decryptByPassword($data, $password) {
+    public function decryptByPassword($data, $password)
+    {
         return $this->decrypt($data, true, $password, null);
     }
 
@@ -154,7 +150,8 @@ class Security extends Component {
      * @return boolean|string the decrypted data or false on authentication failure
      * @see encryptByKey()
      */
-    public function decryptByKey($data, $inputKey, $info = null) {
+    public function decryptByKey($data, $inputKey, $info = null)
+    {
         return $this->decrypt($data, false, $inputKey, $info);
     }
 
@@ -172,7 +169,8 @@ class Security extends Component {
      * @throws Exception on OpenSSL error
      * @see decrypt()
      */
-    protected function encrypt($data, $passwordBased, $secret, $info) {
+    protected function encrypt($data, $passwordBased, $secret, $info)
+    {
         if (!extension_loaded('openssl')) {
             throw new InvalidConfigException('Encryption requires the OpenSSL PHP extension');
         }
@@ -221,7 +219,8 @@ class Security extends Component {
      * @throws Exception on OpenSSL error
      * @see encrypt()
      */
-    protected function decrypt($data, $passwordBased, $secret, $info) {
+    protected function decrypt($data, $passwordBased, $secret, $info)
+    {
         if (!extension_loaded('openssl')) {
             throw new InvalidConfigException('Encryption requires the OpenSSL PHP extension');
         }
@@ -270,7 +269,8 @@ class Security extends Component {
      * @throws InvalidParamException when HMAC generation fails.
      * @return string the derived key
      */
-    public function hkdf($algo, $inputKey, $salt = null, $info = null, $length = 0) {
+    public function hkdf($algo, $inputKey, $salt = null, $info = null, $length = 0)
+    {
         $test = @hash_hmac($algo, '', '', true);
         if (!$test) {
             throw new InvalidParamException('Failed to generate HMAC with hash algorithm: ' . $algo);
@@ -316,7 +316,8 @@ class Security extends Component {
      * @return string the derived key
      * @throws InvalidParamException when hash generation fails due to invalid params given.
      */
-    public function pbkdf2($algo, $password, $salt, $iterations, $length = 0) {
+    public function pbkdf2($algo, $password, $salt, $iterations, $length = 0)
+    {
         if (function_exists('hash_pbkdf2')) {
             $outputKey = hash_pbkdf2($algo, $password, $salt, $iterations, $length, true);
             if ($outputKey === false) {
@@ -378,7 +379,8 @@ class Security extends Component {
      * @see hkdf()
      * @see pbkdf2()
      */
-    public function hashData($data, $key, $rawHash = false) {
+    public function hashData($data, $key, $rawHash = false)
+    {
         $hash = hash_hmac($this->macHash, $data, $key, $rawHash);
         if (!$hash) {
             throw new InvalidConfigException('Failed to generate HMAC with hash algorithm: ' . $this->macHash);
@@ -401,7 +403,8 @@ class Security extends Component {
      * @throws InvalidConfigException when HMAC generation fails.
      * @see hashData()
      */
-    public function validateData($data, $key, $rawHash = false) {
+    public function validateData($data, $key, $rawHash = false)
+    {
         $test = @hash_hmac($this->macHash, '', '', $rawHash);
         if (!$test) {
             throw new InvalidConfigException('Failed to generate HMAC with hash algorithm: ' . $this->macHash);
@@ -425,7 +428,6 @@ class Security extends Component {
     const SOURCE_MCRYPT = 'mcrypt';
     const SOURCE_OPEN_SSL = 'OpenSSL';
     const SOURCE_URANDOM = 'urandom';
-
     /**
      * @var string|null Identifies the random source of the last successful call of [[generateRandomKey]].
      */
@@ -440,7 +442,8 @@ class Security extends Component {
      * @return string the generated random bytes
      * @throws Exception on failure.
      */
-    public function generateRandomKey($length = 32) {
+    public function generateRandomKey($length = 32)
+    {
         if (function_exists('random_bytes')) {
             return random_bytes($length);
         }
@@ -456,12 +459,16 @@ class Security extends Component {
         // The recent LibreSSL RNGs are faster and better than /dev/urandom.
         // Parse OPENSSL_VERSION_TEXT because OPENSSL_VERSION_NUMBER is no use for LibreSSL.
         // https://bugs.php.net/bug.php?id=71143
-        if ($this->_randomSource === self::SOURCE_LIBRE_SSL || ($this->_randomSource === null && defined('OPENSSL_VERSION_TEXT') && preg_match('{^LibreSSL (\d\d?)\.(\d\d?)\.(\d\d?)$}', OPENSSL_VERSION_TEXT, $matches) && (10000 * $matches[1]) + (100 * $matches[2]) + $matches[3] >= 20105)
+        if ($this->_randomSource === self::SOURCE_LIBRE_SSL
+            || ($this->_randomSource === null
+                && defined('OPENSSL_VERSION_TEXT')
+                && preg_match('{^LibreSSL (\d\d?)\.(\d\d?)\.(\d\d?)$}', OPENSSL_VERSION_TEXT, $matches)
+                && (10000 * $matches[1]) + (100 * $matches[2]) + $matches[3] >= 20105)
         ) {
             $key = openssl_random_pseudo_bytes($length, $cryptoStrong);
             if ($cryptoStrong === false) {
                 throw new Exception(
-                'openssl_random_pseudo_bytes() set $crypto_strong false. Your PHP setup is insecure.'
+                    'openssl_random_pseudo_bytes() set $crypto_strong false. Your PHP setup is insecure.'
                 );
             }
             if ($key !== false && StringHelper::byteLength($key) === $length) {
@@ -475,7 +482,10 @@ class Security extends Component {
 
         // mcrypt_create_iv() does not use libmcrypt. Since PHP 5.3.7 it directly reads
         // CrypGenRandom on Windows. Elsewhere it directly reads /dev/urandom.
-        if ($this->_randomSource === self::SOURCE_MCRYPT || ($this->_randomSource === null && PHP_VERSION_ID >= 50307 && function_exists('mcrypt_create_iv'))
+        if ($this->_randomSource === self::SOURCE_MCRYPT
+            || ($this->_randomSource === null
+                && PHP_VERSION_ID >= 50307
+                && function_exists('mcrypt_create_iv'))
         ) {
             $key = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
             if (StringHelper::byteLength($key) === $length) {
@@ -511,12 +521,13 @@ class Security extends Component {
 
         // Since 5.4.0, openssl_random_pseudo_bytes() reads from CryptGenRandom on Windows instead
         // of using OpenSSL library. Don't use OpenSSL on other platforms.
-        if ($this->_randomSource === self::SOURCE_OPEN_SSL || (DIRECTORY_SEPARATOR !== '/' && PHP_VERSION_ID >= 50400)
+        if ($this->_randomSource === self::SOURCE_OPEN_SSL
+            || (DIRECTORY_SEPARATOR !== '/' && PHP_VERSION_ID >= 50400)
         ) {
             $key = openssl_random_pseudo_bytes($length, $cryptoStrong);
             if ($cryptoStrong === false) {
                 throw new Exception(
-                'openssl_random_pseudo_bytes() set $crypto_strong false. Your PHP setup is insecure.'
+                    'openssl_random_pseudo_bytes() set $crypto_strong false. Your PHP setup is insecure.'
                 );
             }
             if ($key !== false && StringHelper::byteLength($key) === $length) {
@@ -539,7 +550,8 @@ class Security extends Component {
      * @return string the generated random key
      * @throws Exception on failure.
      */
-    public function generateRandomString($length = 32) {
+    public function generateRandomString($length = 32)
+    {
         if (!is_int($length)) {
             throw new InvalidParamException('First parameter ($length) must be an integer');
         }
@@ -587,7 +599,8 @@ class Security extends Component {
      * @throws Exception on bad password parameter or cost parameter.
      * @see validatePassword()
      */
-    public function generatePasswordHash($password, $cost = null) {
+    public function generatePasswordHash($password, $cost = null)
+    {
         if ($cost === null) {
             $cost = $this->passwordHashCost;
         }
@@ -615,12 +628,15 @@ class Security extends Component {
      * @throws InvalidParamException on bad password/hash parameters or if crypt() with Blowfish hash is not available.
      * @see generatePasswordHash()
      */
-    public function validatePassword($password, $hash) {
+    public function validatePassword($password, $hash)
+    {
         if (!is_string($password) || $password === '') {
             throw new InvalidParamException('Password must be a string and cannot be empty.');
         }
 
-        if (!preg_match('/^\$2[axy]\$(\d\d)\$[\.\/0-9A-Za-z]{22}/', $hash, $matches) || $matches[1] < 4 || $matches[1] > 30
+        if (!preg_match('/^\$2[axy]\$(\d\d)\$[\.\/0-9A-Za-z]{22}/', $hash, $matches)
+            || $matches[1] < 4
+            || $matches[1] > 30
         ) {
             throw new InvalidParamException('Hash is invalid.');
         }
@@ -650,7 +666,8 @@ class Security extends Component {
      * @return string the random salt value.
      * @throws InvalidParamException if the cost parameter is out of the range of 4 to 31.
      */
-    protected function generateSalt($cost = 13) {
+    protected function generateSalt($cost = 13)
+    {
         $cost = (int) $cost;
         if ($cost < 4 || $cost > 31) {
             throw new InvalidParamException('Cost must be between 4 and 31.');
@@ -673,7 +690,8 @@ class Security extends Component {
      * @param string $actual user-supplied string.
      * @return boolean whether strings are equal.
      */
-    public function compareString($expected, $actual) {
+    public function compareString($expected, $actual)
+    {
         $expected .= "\0";
         $actual .= "\0";
         $expectedLength = StringHelper::byteLength($expected);
@@ -684,5 +702,4 @@ class Security extends Component {
         }
         return $diff === 0;
     }
-
 }

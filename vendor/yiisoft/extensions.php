@@ -60,7 +60,7 @@ return array (
   'yiisoft/yii2-mongodb' => 
   array (
     'name' => 'yiisoft/yii2-mongodb',
-    'version' => '2.1.0.0',
+    'version' => '9999999-dev',
     'alias' => 
     array (
       '@yii/mongodb' => $vendorDir . '/yiisoft/yii2-mongodb',
