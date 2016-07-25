@@ -754,7 +754,7 @@ class Model extends Component implements IteratorAggregate, ArrayAccess, Arrayab
         }
         $attributes = [];
         foreach ($scenarios[$scenario] as $attribute) {
-            if ($attribute[0] !== '!') {
+            if ($attribute[0] !== '!' && !in_array('!' . $attribute, $scenarios[$scenario])) {
                 $attributes[] = $attribute;
             }
         }
@@ -821,9 +821,11 @@ class Model extends Component implements IteratorAggregate, ArrayAccess, Arrayab
         $scope = $formName === null ? $this->formName() : $formName;
         if ($scope === '' && !empty($data)) {
             $this->setAttributes($data);
+
             return true;
         } elseif (isset($data[$scope])) {
             $this->setAttributes($data[$scope]);
+
             return true;
         } else {
             return false;

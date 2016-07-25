@@ -24,9 +24,39 @@ use Yii;
  * $collection->insert(['name' => 'John Smith', 'status' => 1]);
  * ```
  *
- * Collection also provides shortcut for [[Command]] methods, such as [[group()]], [[mapReduce()]] and so on.
- *
  * To perform "find" queries, please use [[Query]] instead.
+ *
+ * Mongo uses JSON format to specify query conditions with quite specific syntax.
+ * However Collection class provides the ability of "translating" common condition format used "yii\db\*"
+ * into Mongo condition.
+ * For example:
+ *
+ * ```php
+ * $condition = [
+ *     [
+ *         'OR',
+ *         ['AND', ['first_name' => 'John'], ['last_name' => 'Smith']],
+ *         ['status' => [1, 2, 3]]
+ *     ],
+ * ];
+ * print_r($collection->buildCondition($condition));
+ * // outputs :
+ * [
+ *     '$or' => [
+ *         [
+ *             'first_name' => 'John',
+ *             'last_name' => 'John',
+ *         ],
+ *         [
+ *             'status' => ['$in' => [1, 2, 3]],
+ *         ]
+ *     ]
+ * ]
+ * ```
+ *
+ * Note: condition values for the key '_id' will be automatically cast to [[\MongoId]] instance,
+ * even if they are plain strings. However, if you have other columns, containing [[\MongoId]], you
+ * should take care of possible typecast on your own.
  *
  * @property string $fullName Full name of this collection, including database name. This property is
  * read-only.
@@ -229,8 +259,7 @@ class Collection extends Object
     {
         $options['limit'] = 1;
         $cursor = $this->find($condition, $fields, $options);
-        $rows = $cursor->toArray();
-        return empty($rows) ? null : current($rows);
+        return current($cursor->toArray());
     }
 
     /**
