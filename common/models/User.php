@@ -53,7 +53,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function attributes()
     {
-        return ['id', 'name', 'password', 'mail', 'screenname', 'desc', 'authcode', 'addtime'];
+        return ['_id','id', 'name', 'password', 'mail', 'screenname', 'desc', 'authcode', 'addtime'];
     }
 
 

@@ -67,9 +67,8 @@ AppAsset::register($this);
                 'url' => ['/site/logout'],
                 'linkOptions' => ['data-method' => 'post']
             ],
-            ['label' => '网站', 'url' => '', 'linkOptions' => ['target' => '_blank']],
             //查一下 urlManage的作用
-//            ['label' => '网站', 'url' => Yii::$app->frontendUrlManager->getHostInfo(), 'linkOptions' => ['target' => '_blank']],
+            ['label' => '网站', 'url' => Yii::$app->frontendUrlManager->getHostInfo(), 'linkOptions' => ['target' => '_blank']],
         ];
     }
     echo Nav::widget([

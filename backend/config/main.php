@@ -40,6 +40,7 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        'frontendUrlManager' => require(__DIR__ . '/../../common/config/FrontendUrlManager.php'),
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,
