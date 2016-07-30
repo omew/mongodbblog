@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 //mongodb activerecord
+use common\helpers\StringHelper;
 use yii\mongodb\ActiveRecord;
 use yii\web\IdentityInterface;
 
@@ -39,12 +40,28 @@ class User extends ActiveRecord implements IdentityInterface
             [['name'], 'string', 'max' => 32, 'on' => ['create']],
             [['screenName'], 'string', 'max' => 32],
             [['name'], 'checkName', 'on' => ['create']],
-            [['screenName'], 'checkName', 'skipOnEmpty' => false],
+            [['screenname'], 'checkName', 'skipOnEmpty' => false],
             [['mail'], 'email'],
             [['mail'], 'string', 'max' => 200],
             [['name'], 'unique', 'on' => ['create']],
-            [['mail', 'screenName'], 'unique'],
+            [['mail', 'screenname'], 'unique'],
         ];
+    }
+
+    /**
+     * 验证是不是包含空的字符串
+     * @access public
+     */
+    public function checkName($attribute, $params)
+    {
+
+        if (!$this->hasErrors()) {
+            if (($attribute == 'name') || ($attribute == 'screenName' && $this->$attribute != '')) {
+                if (!StringHelper::checkCleanStr($this->$attribute)) {
+                    $this->addError($attribute, $this->getAttributeLabel($attribute) . '只能为数字字母下划线横线');
+                }
+            }
+        }
     }
 
     /**
@@ -53,7 +70,26 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function attributes()
     {
-        return ['_id','id', 'name', 'password', 'mail', 'screenname', 'desc', 'authcode', 'addtime'];
+        return ['_id', 'id', 'name', 'password', 'mail', 'screenname', 'desc', 'authcode', 'addtime'];
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'id',
+            'name' => '用户名',
+            'password' => '密码',
+            'mail' => '邮箱',
+//            'url' => '个人主页',
+            'screenname' => '昵称',
+            'addtime' => '创建时间',
+            'group' => '用户组',
+            'authcode' => 'Auth Code',
+        ];
     }
 
 
@@ -67,7 +103,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        $user = static::findOne(['id'=>$id]);
+        $user = static::findOne(['id' => $id]);
         return $user;
     }
 
