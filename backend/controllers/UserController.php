@@ -36,14 +36,12 @@ class UserController extends BaseController
     public function actionCreate()
     {
         $model = new User();
-        $model->scenario='create';
-        if(Yii::$app->request->isPost){
-            if($model->load(Yii::$app->request->post())&&$model->save()){
+        $model->scenario = 'create';
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 return $this->redirect(['index']);
             }
-
         }
-
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -60,19 +58,17 @@ class UserController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if($model->uid==1){
+        //第一个是超级管理员
+        if ($model->id == 1) {
             throw new ForbiddenHttpException('禁止操作');
         }
-        $model->scenario='update';
-        $model->password='';
-        if(Yii::$app->request->isPost){
-
-            if($model->load(Yii::$app->request->post())&&$model->save()){
+        $model->scenario = 'update';
+        $model->password = '';
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 return $this->redirect(['index']);
             }
-
         }
-
         return $this->render('update', [
             'model' => $model,
         ]);
@@ -88,12 +84,11 @@ class UserController extends BaseController
      */
     public function actionDelete($id)
     {
-        $model=$this->findModel($id);
-        if($model->uid==1){
+        $model = $this->findModel($id);
+        if ($model->id == 1) {
             throw new ForbiddenHttpException('禁止操作');
         }
         $model->delete();
-
         return $this->redirect(['index']);
     }
 

@@ -17,15 +17,34 @@ use yii\web\IdentityInterface;
  * @property string $mail
  * @property string $url
  * @property string $screenName
- * @property integer $created
- * @property integer $activated
- * @property integer $logged
+ * @property integer $addtime
  * @property string $group
  * @property string $authCode
  * @property mixed authcode
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+
+    const GROUP_VISITOR = 'visitor';
+    const GROUP_SUBSCRIBER = 'subscriber';
+    const GROUP_CONTRIBUTOR = 'contributor';
+    const GROUP_EDITOR = 'editor';
+    const GROUP_ADMINISTRATOR = 'administrator';
+
+    /**
+     * 用户所属组
+     * @access public
+     */
+    public static function getUserGroup()
+    {
+        return [
+            self::GROUP_ADMINISTRATOR => '管理员',
+            self::GROUP_CONTRIBUTOR => '贡献者',
+            self::GROUP_EDITOR => '编辑',
+            self::GROUP_SUBSCRIBER => '关注者',
+            self::GROUP_VISITOR => '访问者',
+        ];
+    }
 
     /**
      * @inheritdoc
@@ -38,19 +57,30 @@ class User extends ActiveRecord implements IdentityInterface
             [['mail'], 'required', 'on' => ['update', 'profile']],
             [['password'], 'string', 'min' => 6, 'max' => 20],
             [['name'], 'string', 'max' => 32, 'on' => ['create']],
-            [['screenName'], 'string', 'max' => 32],
+            [['screenname'], 'string', 'max' => 32],
             [['name'], 'checkName', 'on' => ['create']],
             [['screenname'], 'checkName', 'skipOnEmpty' => false],
             [['mail'], 'email'],
-            [['mail'], 'string', 'max' => 200],
+            [['url'], 'url'],
+            [['mail', 'url', 'desc'], 'string', 'max' => 200],
             [['name'], 'unique', 'on' => ['create']],
             [['mail', 'screenname'], 'unique'],
+            [['group'], 'filter', 'filter' => function ($value) {
+                if (!array_key_exists($value, self::getUserGroup())) {
+                    //默认没有设置的话 表示是访客
+                    return self::GROUP_VISITOR;
+                }
+                return $value;
+            }, 'on' => ['create', 'update']],
         ];
     }
 
+
     /**
-     * 验证是不是包含空的字符串
+     * 验证字段合法性
      * @access public
+     * @param $attribute
+     * @param $params
      */
     public function checkName($attribute, $params)
     {
@@ -70,7 +100,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function attributes()
     {
-        return ['_id', 'id', 'name', 'password', 'mail', 'screenname', 'desc', 'authcode', 'addtime'];
+        return ['_id', 'id', 'name', 'password', 'mail', 'screenname', 'desc', 'authcode', 'group', 'url', 'addtime'];
     }
 
 
@@ -84,11 +114,12 @@ class User extends ActiveRecord implements IdentityInterface
             'name' => '用户名',
             'password' => '密码',
             'mail' => '邮箱',
-//            'url' => '个人主页',
+            'url' => '个人主页',
             'screenname' => '昵称',
             'addtime' => '创建时间',
-            'group' => '用户组',
+            'group' => '角色',
             'authcode' => 'Auth Code',
+            'desc' => '描述',
         ];
     }
 
@@ -132,10 +163,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getId()
     {
-//        var_dump($this->_id);
-//        exit;
         return $this->id;
-//        return $this->getPrimaryKey();
     }
 
     /**
@@ -152,6 +180,15 @@ class User extends ActiveRecord implements IdentityInterface
     public function validateAuthKey($authKey)
     {
         return $this->authcode === $authKey;
+    }
+
+
+    /**
+     * Generates "remember me" authentication key
+     */
+    public function generateAuthKey()
+    {
+        $this->authcode = Yii::$app->security->generateRandomString();
     }
 
     /**
@@ -174,6 +211,51 @@ class User extends ActiveRecord implements IdentityInterface
     public function generatePassword($password)
     {
         return Yii::$app->security->generatePasswordHash($password);
+    }
+
+    /**
+     *更新数据之前
+     * @param bool $insert 表示是不是插入的
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->scenario == 'create') {
+                $this->generatePassword($this->password);
+            } elseif ($this->scenario == 'update' || $this->scenario = 'profile') {
+                if (trim($this->password) == '') {
+                    //获取更新之前的字段值
+                    $this->password = $this->getOldAttribute('password');
+//                    $this->id = $this->getOldAttribute('id');
+                } else {
+                    $this->generatePassword($this->password);
+                }
+            }
+            if ($insert) {
+                //还需要更新 id字段 该字段需要自增
+                $this->get_autoincrement_id();
+                $this->addtime = time();
+                $this->generateAuthKey();
+            }
+            if (trim($this->screenname) == '') {
+                $this->screenname = $this->name;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 获取自增主键
+     * @access public
+     */
+    public function get_autoincrement_id()
+    {
+        $collection = Yii::$app->mongodb->getCollection('counters');
+        $id_arr = $collection->findAndModify(['_id' => 'user_id'], ['$inc' => ['count' => 1]], ['fields' => ['count' => 1, '_id' => 0]]);
+        $this->id = $id_arr['count'];
     }
 
 }

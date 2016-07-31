@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -23,7 +24,13 @@ $this->title = '管理用户';
             ['label' => '登录名', 'value' => 'name'],
             ['label' => '昵称', 'value' => 'screenname'],
             ['label' => '邮箱', 'value' => 'mail'],
-            ['label' => '描述', 'value' => 'desc','headerOptions' => ['width' => '170'],],
+            ['label' => '描述', 'value' => 'desc', 'headerOptions' => ['width' => '170'],],
+            ['label' => '角色', 'value' => function ($data) {
+                $group_info = User::getUserGroup();
+                if (array_key_exists($data->group, $group_info)) {
+                    return $group_info[$data->group];
+                }
+            }],
             [
                 'class' => 'yii\grid\DataColumn', //由于是默认类型，可以省略
                 'label' => '添加时间',
