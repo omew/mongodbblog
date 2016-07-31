@@ -6,8 +6,6 @@ use yii;
 use yii\mongodb\ActiveRecord;
 
 /**
- * This is the model class for table "{{%options}}".
- *
  * @property string $name
  * @property integer $user
  * @property string $value
