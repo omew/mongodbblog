@@ -21,6 +21,7 @@ use yii\web\IdentityInterface;
  * @property string $group
  * @property string $authCode
  * @property mixed authcode
+ * @property mixed id
  */
 class User extends ActiveRecord implements IdentityInterface
 {
