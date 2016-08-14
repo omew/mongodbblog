@@ -12,12 +12,8 @@ use common\widgets\CategoryDropDownList;
 <div class="meta-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
     <?= $form->field($model, 'name')->textInput(['maxlength' => 200]) ?>
-
     <?= $form->field($model, 'slug')->textInput(['maxlength' => 200]) ?>
-
-
     <?=CategoryDropDownList::widget([
         'model'=>$model,
         'attribute'=>'parent',

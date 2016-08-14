@@ -9,19 +9,24 @@ namespace common\queries;
 use common\models\Content;
 use yii\db\ActiveQuery;
 
-class ContentQuery extends ActiveQuery {
+class ContentQuery extends ActiveQuery
+{
 
     public $contentType;
 
-    public function init() {
+    public function init()
+    {
         parent::init();
         $this->type($this->contentType);
     }
+
     /**
      * 选择字段  不包text 字段
      * @access public
      */
-    public function selectNoText() {
+    public function selectNoText()
+    {
+//        $columns = array_keys(Content::getTableSchema()->columns);
         $columns = array_keys(Content::getTableSchema()->columns);
         $key = array_search('text', $columns);
         if ($key !== false) {
@@ -31,24 +36,28 @@ class ContentQuery extends ActiveQuery {
         return $this;
     }
 
-    public function type($type) {
+    public function type($type)
+    {
         $this->andWhere(['type' => $type]);
         return $this;
     }
 
-    public function published() {
+    public function published()
+    {
         $this->andWhere(['status' => Content::STATUS_PUBLISH]);
         return $this;
     }
 
-    public function recentPublished($limit = 10) {
+    public function recentPublished($limit = 10)
+    {
         $this->andWhere(['status' => Content::STATUS_PUBLISH]);
         $this->limit($limit);
         $this->orderBy(['cid' => SORT_DESC]);
         return $this;
     }
 
-    public function orderByCid() {
+    public function orderByCid()
+    {
         $this->orderBy(['cid' => SORT_DESC]);
         return $this;
     }

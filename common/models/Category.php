@@ -37,13 +37,13 @@ class Category extends Meta
     }
 
 
-    public function afterDelete()
-    {
-        parent::afterDelete();
-        //修改直接子类的父级id
-        self::updateAll(['parent' => $this->parent], 'parent=:parent AND type=:type', [':parent' => $this->mid, ':type' => static::TYPE]);
-        //删除和文章的关联
-        Relationship::deleteAll(['mid' => $this->mid]);
-    }
+//    public function afterDelete()
+//    {
+//        parent::afterDelete();
+//        //修改直接子类的父级id
+//        self::updateAll(['parent' => $this->parent], 'parent=:parent AND type=:type', [':parent' => $this->id, ':type' => static::TYPE]);
+//        //删除和文章的关联
+//        Relationship::deleteAll(['id' => $this->id]);
+//    }
 
 }

@@ -28,7 +28,7 @@ class CategoryCheckboxList extends yii\base\Widget{
         if($this->postId!==null){
             $post=Post::find()->andwhere('cid=:cid',[':cid'=>$this->postId])->one();
             $postCategories=$post->getCategories()->asArray()->all();
-            $postCategoryIds=yii\helpers\ArrayHelper::getColumn($postCategories,'mid');
+            $postCategoryIds=yii\helpers\ArrayHelper::getColumn($postCategories,'id');
         }
 
         $categories=CategoryTree::getInstance()->getAllCategories();
@@ -40,7 +40,7 @@ class CategoryCheckboxList extends yii\base\Widget{
             foreach($categories as $v){
 
                 $this->_inputStr.='<div class="checkbox">';
-                $this->_inputStr.=str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;',$v['depth']-1).Html::checkbox('inputCategories[]',in_array($v['mid'],$postCategoryIds),['label'=>$v['name'],'value'=>$v['mid']]);
+                $this->_inputStr.=str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;',$v['depth']-1).Html::checkbox('inputCategories[]',in_array($v['id'],$postCategoryIds),['label'=>$v['name'],'value'=>$v['id']]);
                 $this->_inputStr.='</div>';
 
             }

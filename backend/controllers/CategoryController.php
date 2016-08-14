@@ -84,7 +84,7 @@ class CategoryController extends BaseController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id, '')->delete();
+        $this->findModel($id, '_id')->delete();
         $this->redirect(['index']);
     }
 

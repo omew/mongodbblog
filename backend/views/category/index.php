@@ -5,16 +5,8 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 $this->title = '管理分类';
 ?>
+
 <div class="meta-index">
-    <div class="btn-group">
-        <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
-            选中项 <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-            <li><a href="#">删除</a></li>
-            <li><a href="#">更新</a></li>
-        </ul>
-    </div>
         <?= Html::a('新增', ['create'], ['class' => 'btn btn-success']) ?>
     <?php if($parentCategory): ?>
         <?= Html::a('返回上一级', ['/category/index','parent'=>$parentCategory->parent], ['class' => 'btn btn-default']) ?>
