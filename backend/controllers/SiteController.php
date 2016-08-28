@@ -66,4 +66,44 @@ class SiteController extends BaseController
 
         return $this->goHome();
     }
+
+
+    /**
+     * 上传文件
+     * @return array
+     */
+    public function actionUpload()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        //error ['err'=>1,'msg'=>'error message']
+        //success ['err'=>0,'msg'=>'success message','data'=>['id'=>'','name'=>'','url'=>'','isImage'=>'']]
+        $upload = new Upload([
+            'savePath' => Attachment::SAVE_PATH,
+        ]);
+        if ($upload->checkFileInfoAndSave()) {
+            //保存到数据库
+            $attachment = new Attachment();
+            $attachment->title = $upload->originalFileName;
+            $attachment->text = [
+                'name' => Html::encode($upload->originalFileName),
+                'path' => Yii::getAlias(Attachment::WEB_URL . $upload->saveRelativePath),
+                'minetype' => $upload->fileMimeType,
+                'ext' => $upload->fileExt,
+                'size' => $upload->filesize,
+            ];
+            $attachment->save(false);
+            return [
+                'err' => 0,
+                'msg' => '上传成功',
+                'data' => [
+                    'id' => $attachment->cid,
+                    'name' => Html::encode($upload->originalFileName),
+                    'url' => Yii::getAlias(Attachment::WEB_URL . $upload->saveRelativePath),
+                    'isImage' => in_array($upload->fileMimeType, Attachment::$imageMineType),
+                ],
+            ];
+        } else {
+            return ['err' => 1, 'msg' => $upload->error];
+        }
+    }
 }

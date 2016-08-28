@@ -21,7 +21,6 @@ class BootstrapMarkdown extends yii\base\Widget{
 
 
     public function init(){
-
         $this->options['id']='markdown-textarea';
         if(!$this->language){
             $this->language='en';

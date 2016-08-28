@@ -21,9 +21,9 @@ class PostController extends BaseController
      */
     public function actionIndex()
     {
-/*        $dataProvider = new ActiveDataProvider([
-            'query' => Post::find()->selectNoText()->with('categories')->with('author')->orderByCid(),
-        ]);*/
+        /*        $dataProvider = new ActiveDataProvider([
+                    'query' => Post::find()->selectNoText()->with('categories')->with('author')->orderByCid(),
+                ]);*/
         return $this->render('index', [
 //            'dataProvider' => $dataProvider,
         ]);
@@ -38,14 +38,14 @@ class PostController extends BaseController
     public function actionCreate()
     {
         $model = new Post();
-        $model->allowComment=true;
-        $model->allowFeed=true;
-        $model->allowPing=true;
-        if(Yii::$app->request->isPost){
-            if($model->load(Yii::$app->request->post())){
-                $model->inputCategories=Yii::$app->request->post('inputCategories',[]);
-                $model->inputTags=Yii::$app->request->post('inputTags',[]);
-                $model->inputAttachments=Yii::$app->request->post('inputAttachments',[]);
+        $model->allowComment = true;
+        $model->allowFeed = true;
+        $model->allowPing = true;
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post())) {
+                $model->inputCategorie = Yii::$app->request->post('inputCategorie');
+                $model->inputTags = Yii::$app->request->post('inputTags', []);
+//              $model->inputAttachments=Yii::$app->request->post('inputAttachments',[]);
                 if ($model->save()) {
                     return $this->redirect(['index']);
                 }
@@ -65,16 +65,15 @@ class PostController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if(Yii::$app->request->isPost){
-            if($model->load(Yii::$app->request->post())){
-                $model->inputCategories=Yii::$app->request->post('inputCategories',[]);
-                $model->inputTags=Yii::$app->request->post('inputTags',[]);
-                $model->inputAttachments=Yii::$app->request->post('inputAttachments',[]);
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post())) {
+                $model->inputCategories = Yii::$app->request->post('inputCategories', []);
+                $model->inputTags = Yii::$app->request->post('inputTags', []);
+//                $model->inputAttachments=Yii::$app->request->post('inputAttachments',[]);
                 if ($model->save()) {
                     return $this->redirect(['index']);
                 }
             }
-
         }
 
         return $this->render('update', [
@@ -98,15 +97,26 @@ class PostController extends BaseController
      * Finds the Content model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
+     * @param 标志根据什么取出|string $flag 标志根据什么取出 model
      * @return Post the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id, $flag = '_id')
     {
-        if (($model = Post::find()->andWhere(['cid'=>$id])->one()) !== null) {
-            return $model;
+        if ($flag == '_id') {
+            //根据mongodb _id 取数据
+            if (($model = Post::findOne($id)) !== null) {
+                return $model;
+            } else {
+                throw new NotFoundHttpException('The requested page does not exist.');
+            }
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            //根据 mongodb 自定义的主键取数据 方式
+            if (($model = Post::find()->andWhere(['id' => intval($id)])->one()) !== null) {
+                return $model;
+            } else {
+                throw new NotFoundHttpException('The requested page does not exist.');
+            }
         }
     }
 }

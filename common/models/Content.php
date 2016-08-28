@@ -28,6 +28,7 @@ use yii\helpers\Html;
  * @property string $allowPing
  * @property string $allowFeed
  * @property integer $parent
+ * @property  authorName
  */
 abstract class Content extends ActiveRecord
 {
@@ -41,12 +42,13 @@ abstract class Content extends ActiveRecord
 
     const TYPE = '';
 
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
+    public static function collectionName()
     {
-        return '{{%contents}}';
+        return 'content';
     }
 
 
@@ -56,7 +58,7 @@ abstract class Content extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'cid' => 'Cid',
+            'id' => 'Cid',
             'title' => '标题',
             'slug' => '缩略名',
             'created' => '发布日期',
@@ -82,21 +84,23 @@ abstract class Content extends ActiveRecord
      */
     public function attributes()
     {
-        return ['_id', 'id', 'title', 'slug', 'created', 'modified', 'text', 'order', 'authorId', 'template', 'type', 'status', 'password', 'commentsNum', 'allowComment', 'allowPing', 'allowFeed', 'parent'];
+        return ['_id', 'id', 'title', 'slug', 'created', 'modified', 'text', 'order', 'authorId', 'authorName', 'template', 'type', 'status', 'password', 'commentsNum', 'allowComment', 'allowPing', 'allowFeed', 'parent', 'attachments'];
     }
 
 
+    /**
+     * @param bool $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
             if ($insert) {
-
                 $this->authorId = Yii::$app->user->identity->getId();
+                $this->authorName = Yii::$app->user->identity->screenname;
                 $this->type = static::TYPE;
             }
-
             $this->modified = time();
-
             return true;
         } else {
             return false;
@@ -108,7 +112,7 @@ abstract class Content extends ActiveRecord
         parent::afterSave($insert, $changedAttributes);
         //更新slug
         if (trim($this->slug) == '') {
-            $this->slug = $this->cid;
+            $this->slug = $this->id;
             Content::updateAll(['slug' => $this->cid], ['cid' => $this->cid]);
         }
     }

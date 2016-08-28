@@ -20,7 +20,8 @@
         "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-mongodb": "2.1.0",
         "eonasdan/bootstrap-datetimepicker": "4.17.37",
-        "moxiecode/plupload": "3.x-dev"
+        "moxiecode/plupload": "3.x-dev",
+        "yidashi/yii2-bootstrap-markdown": "v2.0.1"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

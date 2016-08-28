@@ -18,7 +18,7 @@ use yii\helpers\Html;
  * @property integer $count
  * @property integer $order
  * @property integer $parent
- * @property  id
+ * @property integer id
  */
 abstract class Meta extends \yii\mongodb\ActiveRecord
 {
@@ -58,7 +58,7 @@ abstract class Meta extends \yii\mongodb\ActiveRecord
      */
     public function attributes()
     {
-        return ['_id' , 'id', 'name', 'slug', 'type', 'description', 'count', 'order', 'parent'];
+        return ['_id', 'id', 'name', 'slug', 'type', 'description', 'count', 'order', 'parent'];
     }
 
     /**
@@ -90,7 +90,7 @@ abstract class Meta extends \yii\mongodb\ActiveRecord
                     $this->addError($attribute, $this->getAttributeLabel($attribute) . '已经存在');
                 }
             } else {
-                if ($model != null && $model->mid != $this->mid) {
+                if ($model != null && $model->id != $this->id) {
                     $this->addError($attribute, $this->getAttributeLabel($attribute) . '已经存在');
                 }
             }
@@ -112,6 +112,9 @@ abstract class Meta extends \yii\mongodb\ActiveRecord
         return new MetaQuery(get_called_class(), ['metaType' => static::TYPE]);
     }
 
+    /**
+     *
+     */
     public function getPosts($isPublished = true)
     {
         $query = $this->hasMany(Post::className(), ['cid' => 'cid'])->with('categories')->with('tags')->with('author')->orderByCid();
@@ -121,7 +124,9 @@ abstract class Meta extends \yii\mongodb\ActiveRecord
         return $query->viaTable(Relationship::tableName(), ['mid' => 'mid']);
     }
 
-
+    /**
+     *
+     */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -146,5 +151,48 @@ abstract class Meta extends \yii\mongodb\ActiveRecord
         $id_arr = $collection->findAndModify(['_id' => 'meta_id'], ['$inc' => ['count' => 1]], ['fields' => ['count' => 1, '_id' => 0]]);
         $this->id = $id_arr['count'];
     }
+
+
+    /**
+     * 更新 标签的 数量 还有文章数组的 id name 数组
+     * @access public
+     * @param $id
+     * @param $postId    文章的id
+     * @param $postName  文章的name
+     * @param $flag     文章的flag 表示是要 删除 还是 新增
+     * @return bool
+     */
+    public static function updateCategoryTagCountIdname($id, $postId, $postName, $flag)
+    {
+        $id = intval($id);
+        $postId = intval($postId);
+        if ($id === 0) {
+            return;
+        }
+        $collection = Yii::$app->mongodb->getCollection(self::collectionName());
+        if ($flag === 'add') {
+            //添加字段 count+1 id 添加字段  post  数组中添加字段
+            $collection->update(
+                ['id' => $id],
+                ['$inc' => ['count' => 1], '$push' => ['post' => ['id' => $postId, 'name' => $postName]]],
+                ['upsert' => false, 'multi' => false]
+            );
+        } else {
+            //数量减少1
+            $collection->update(
+                ['id' => $id],
+                ['$inc' => ['count' => -1]],
+                ['upsert' => false, 'multi' => false]
+            );
+            //这个查询还是费了一点劲   难点在 更新二维数组中的值
+            $collection->update(
+                ['id' => $id],
+                ['$pull' => ['post' => ['id' => $postId]]],
+                ['upsert' => false, 'multi' => false]
+            );
+        }
+        return true;
+    }
+
 
 }

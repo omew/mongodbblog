@@ -24,6 +24,7 @@ class ComposerStaticInit839c88571a55ca11cb706526ae1c701d
             'yii\\codeception\\' => 16,
             'yii\\bootstrap\\' => 14,
             'yii\\' => 4,
+            'yidashi\\markdown\\' => 17,
         ),
         'c' => 
         array (
@@ -75,6 +76,10 @@ class ComposerStaticInit839c88571a55ca11cb706526ae1c701d
         'yii\\' => 
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2',
+        ),
+        'yidashi\\markdown\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/yidashi/yii2-bootstrap-markdown',
         ),
         'cebe\\markdown\\' => 
         array (

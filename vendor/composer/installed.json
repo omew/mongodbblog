@@ -1302,6 +1302,35 @@
         ]
     },
     {
+        "name": "yidashi/yii2-bootstrap-markdown",
+        "version": "v2.0.1",
+        "version_normalized": "2.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/yidashi/yii2-bootstrap-markdown.git",
+            "reference": "2297d1678810780754130c73763ac4dd913bb675"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/yidashi/yii2-bootstrap-markdown/zipball/2297d1678810780754130c73763ac4dd913bb675",
+            "reference": "2297d1678810780754130c73763ac4dd913bb675",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0"
+        },
+        "time": "2016-07-10 09:12:28",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "yidashi\\markdown\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "description": "yii2-bootstrap-markdown"
+    },
+    {
         "name": "moxiecode/plupload",
         "version": "3.x-dev",
         "version_normalized": "3.9999999.9999999.9999999-dev",

@@ -40,7 +40,8 @@ class CategoryCheckboxList extends yii\base\Widget{
             foreach($categories as $v){
 
                 $this->_inputStr.='<div class="checkbox">';
-                $this->_inputStr.=str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;',$v['depth']-1).Html::checkbox('inputCategories[]',in_array($v['id'],$postCategoryIds),['label'=>$v['name'],'value'=>$v['id']]);
+//                $this->_inputStr.=str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;',$v['depth']-1).Html::checkbox('inputCategories[]',in_array($v['id'],$postCategoryIds),['label'=>$v['name'],'value'=>$v['id']]);
+                $this->_inputStr.=str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;',$v['depth']-1).Html::radio('inputCategorie', in_array($v['id'],$postCategoryIds), ['label'=>$v['name'],'value'=>$v['id']]);
                 $this->_inputStr.='</div>';
 
             }

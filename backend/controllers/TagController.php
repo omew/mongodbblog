@@ -2,49 +2,40 @@
 
 namespace backend\controllers;
 
-use common\models\Category;
+use common\models\Tag;
 use Yii;
-use yii\base\InvalidValueException;
 use yii\web\NotFoundHttpException;
 use yii\data\ActiveDataProvider;
 
 /**
  * CategoryController implements the CRUD actions for Meta model.
  */
-class CategoryController extends BaseController
+class TagController extends BaseController
 {
 
     /**
      * Lists all Meta models.
-     * @param int|string $parent
      * @return mixed
-     * @throws NotFoundHttpException
      */
-    public function actionIndex($parent = 0)
+    public function actionIndex()
     {
-        $parentCategory = null;
-        if ($parent != 0) {
-            $parentCategory = $this->findModel($parent, '');
-        }
         $dataProvider = new ActiveDataProvider([
-            'query' => Category::find()->andWhere(['parent' => intval($parent)])->orderByid(),
+            'query' => Tag::find()->orderByid(),
         ]);
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-            'parentCategory' => $parentCategory,
         ]);
     }
 
 
     /**
      * Creates a new Meta model.
-     * @param int $parent
+     * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($parent = 0)
+    public function actionCreate()
     {
-        $model = new Category();
-        $model->parent = intval($parent);
+        $model = new Tag();
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
                 if ($model->save()) {
@@ -65,7 +56,7 @@ class CategoryController extends BaseController
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id, $flag = '_id');
+        $model = $this->findModel($id);
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 return $this->redirect(['index']);
@@ -84,7 +75,7 @@ class CategoryController extends BaseController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id, '_id')->delete();
+        $this->findModel($id)->delete();
         $this->redirect(['index']);
     }
 
@@ -92,27 +83,15 @@ class CategoryController extends BaseController
      * Finds the Meta model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @param $flag
-     * @return Category the loaded model
+     * @return Tag the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id, $flag = '_id')
+    protected function findModel($id)
     {
-        if ($flag == '_id') {
-            if (($model = Category::findOne($id)) !== null) {
-                return $model;
-            } else {
-                throw new NotFoundHttpException('The requested page does not exist.');
-            }
+        if (($model = Tag::find()->andWhere(['_id' => $id])->one()) !== null) {
+            return $model;
         } else {
-            if (($model = Category::find()->orderByid()->andWhere(['id' => intval($id)])->one()) !== null) {
-                return $model;
-            } else {
-                throw new NotFoundHttpException('The requested page does not exist.');
-            }
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
-
     }
-
-
 }
