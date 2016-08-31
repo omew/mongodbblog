@@ -1,23 +1,21 @@
 <?php
 
 /**
- * @author: mojifan [<https://github.com/mojifan>]
+ * @author: timelesszhuang [<https://github.com/timelesszhuang>]
  */
 
 namespace common\queries;
 
 use common\models\Content;
+use common\models\Post;
 use yii\db\ActiveQuery;
 
-class ContentQuery extends ActiveQuery
+class PostQuery extends ActiveQuery
 {
-
-    public $contentType;
 
     public function init()
     {
         parent::init();
-        $this->type($this->contentType);
     }
 
     /**
@@ -26,19 +24,12 @@ class ContentQuery extends ActiveQuery
      */
     public function selectNoText()
     {
-//        $columns = array_keys(Content::getTableSchema()->columns);
-        $columns = array_keys(Content::getTableSchema()->columns);
+        $columns=(new Post())->attributes();
         $key = array_search('text', $columns);
         if ($key !== false) {
-            unset($columns[$key]);
+            unset($columns['text']);
         }
         $this->select($columns);
-        return $this;
-    }
-
-    public function type($type)
-    {
-        $this->andWhere(['type' => $type]);
         return $this;
     }
 
@@ -56,9 +47,9 @@ class ContentQuery extends ActiveQuery
         return $this;
     }
 
-    public function orderByCid()
+    public function orderById()
     {
-        $this->orderBy(['cid' => SORT_DESC]);
+        $this->orderBy(['id' => SORT_DESC]);
         return $this;
     }
 

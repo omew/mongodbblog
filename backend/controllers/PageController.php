@@ -1,75 +1,70 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: timeless
+ * Date: 16-8-31
+ * Time: 下午9:29
+ */
 
 namespace backend\controllers;
 
-use common\models\Post;
-use Yii;
-use yii\web\NotFoundHttpException;
+
+use common\models\Page;
 use yii\data\ActiveDataProvider;
+use Yii;
 
-/**
- * PostController implements the CRUD actions for Content model.
- * 发布文章实现
- */
-class PostController extends BaseController
+class PageController extends BaseController
 {
-
-
     /**
-     * Lists all Content models.
-     * @return mixed
+     * 首页数据
+     * @access public
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Post::find(),
+            'query' => Page::find(),
         ]);
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
     }
 
-
     /**
-     * Creates a new Content model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * 创建页面
+     * @access public
      */
     public function actionCreate()
     {
-        $model = new Post();
+        $model = New Page();
         $model->allowComment = true;
         $model->allowFeed = true;
         $model->allowPing = true;
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
-                $model->inputCategory = Yii::$app->request->post('inputCategory');
-                $model->inputTags = Yii::$app->request->post('inputTags', []);
-//              $model->inputAttachments=Yii::$app->request->post('inputAttachments',[]);
                 if ($model->save()) {
                     return $this->redirect(['index']);
                 }
             }
         }
         return $this->render('create', [
-            'model' => $model,
-        ]);
+                'model' => $model
+            ]
+        );
     }
 
     /**
-     * Updates an existing Content model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * 执行更新操作
+     * @access public
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id,'_id');
+
+        $model = $this->findModel($id, '_id');
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post())) {
-                $model->inputCategory = Yii::$app->request->post('inputCategory');
-                $model->inputTags = Yii::$app->request->post('inputTags', []);
-//                $model->inputAttachments=Yii::$app->request->post('inputAttachments',[]);
                 if ($model->save()) {
                     return $this->redirect(['index']);
                 }
@@ -81,10 +76,10 @@ class PostController extends BaseController
     }
 
     /**
-     * Deletes an existing Content model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * 删除数据操作
+     * @access public
+     * @param $id
+     * @return \yii\web\Response
      */
     public function actionDelete($id)
     {
@@ -100,22 +95,23 @@ class PostController extends BaseController
      * @return Post the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id, $flag = '_id')
+    public function findModel($id, $flag = '_id')
     {
         if ($flag == '_id') {
             //根据mongodb _id 取数据
-            if (($model = Post::findOne($id)) !== null) {
+            if (($model = Page::findOne($id)) !== null) {
                 return $model;
             } else {
                 throw new NotFoundHttpException('The requested page does not exist.');
             }
         } else {
             //根据 mongodb 自定义的主键取数据 方式
-            if (($model = Post::find()->andWhere(['id' => intval($id)])->one()) !== null) {
+            if (($model = Page::find()->andWhere(['id' => intval($id)])->one()) !== null) {
                 return $model;
             } else {
                 throw new NotFoundHttpException('The requested page does not exist.');
             }
         }
     }
+
 }

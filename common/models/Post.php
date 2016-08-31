@@ -7,6 +7,7 @@ namespace common\models;
 
 use yii;
 use common\helpers\StringHelper;
+use common\queries\PostQuery;
 use yii\helpers\Html;
 USE Yii\MongoDB\ActiveRecord;
 
@@ -20,15 +21,14 @@ USE Yii\MongoDB\ActiveRecord;
  * @property  authorName
  * @property  categorie_id
  * @property int _id
+ * @property mixed postId
  */
 class Post extends ActiveRecord
 {
-
 //    use AttachmentOperationTrait;
-    const TYPE = 'post';
     const STATUS_PUBLISH = 'publish';
     const STATUS_HIDDEN = 'hidden';
-    public $inputCategorie;
+    public $inputCategory;
     public $inputTags;
     public $inputAttachments;
     public $preCategorie;
@@ -82,7 +82,7 @@ class Post extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'Cid',
+            'id' => 'id',
             'title' => '标题',
             'slug' => '缩略名',
             'created' => '发布日期',
@@ -108,7 +108,7 @@ class Post extends ActiveRecord
      */
     public function attributes()
     {
-        return ['_id', 'id', 'title', 'slug', 'created', 'modified', 'text', 'order', 'authorId', 'authorName', 'template', 'type', 'status', 'password', 'categorie_id', 'categorie_name', 'tags', 'commentsNum', 'allowComment', 'allowPing', 'allowFeed', 'parent', 'attachments'];
+        return ['_id', 'id', 'title', 'slug', 'created', 'modified', 'text', 'order', 'authorId', 'authorName', 'template', 'status', 'password', 'category_id', 'category_name', 'tags', 'commentsNum', 'allowComment', 'allowPing', 'allowFeed', 'parent', 'attachments'];
     }
 
 
@@ -123,11 +123,10 @@ class Post extends ActiveRecord
                 $this->get_autoincrement_id();
                 $this->authorId = Yii::$app->user->identity->getId();
                 $this->authorName = Yii::$app->user->identity->screenname;
-                $this->type = static::TYPE;
-                $this->categorie_id = intval($this->inputCategorie);
+                $this->category_id = intval($this->inputCategory);
                 //需要根据 categories 获取分类的 name;
-                $categorie_model = Category::findOne(['id' => intval($this->categorie_id)]);
-                $this->categorie_name = $categorie_model->name ?: '';
+                $category_model = Category::findOne(['id' => intval($this->category_id)]);
+                $this->category_name = $category_model->name ?: '';
                 //首先把该标签置空
                 $this->tags = [];
             }
@@ -160,33 +159,9 @@ class Post extends ActiveRecord
             }
             //还需要获取是不是 分类 改变了
         }
-        $this->insertCategorie($this->inputCategorie, $beforeCount, $afterCount);
+        $this->insertCategory($this->inputCategory, $beforeCount, $afterCount);
         $this->insertTags($this->inputTags, $beforeCount, $afterCount);
 //        $this->insertAttachment($this->inputAttachments);
-    }
-
-
-    public static function find()
-    {
-        //get_called_class 表示获取静态调用的类名
-        return new ContentQuery(get_called_class(), ['contentType' => static::TYPE]);
-    }
-
-    public function getAuthor()
-    {
-        return $this->hasOne(User::className(), ['uid' => 'authorId']);
-    }
-
-
-    //查询关联的数据
-    public function getCategories()
-    {
-        return $this->hasMany(Category::className(), ['id' => 'id'])->where('type=:type', [':type' => Category::TYPE])->viaTable(Relationship::tableName(), ['id' => 'id']);
-    }
-
-    public function getTags()
-    {
-        return $this->hasMany(Tag::className(), ['mid' => 'mid'])->where('type=:type', [':type' => Tag::TYPE])->viaTable(Relationship::tableName(), ['id' => 'id']);
     }
 
 
@@ -196,7 +171,7 @@ class Post extends ActiveRecord
      * @param bool $afterCount
      * @return bool
      */
-    public function insertCategorie($categoryId, $beforeCount = true, $afterCount = true)
+    public function insertCategory($categoryId, $beforeCount = true, $afterCount = true)
     {
         //如果之前没有 统计上  false;
         //                          现在 true 只需要 更新 分类的 数量, 还有tag 中 添加文章的 id name;
@@ -221,12 +196,12 @@ class Post extends ActiveRecord
             }
         } else {
             //之前已经统计
-            $oldCategorieId = $this->oldAttributes['categorie_id'] ?: 0;
+            $oldCategoryId = $this->oldAttributes['category_id'] ?: 0;
             if ($afterCount === true) {
-                if ($oldCategorieId != $categoryId && $oldCategorieId == 0) {
+                if ($oldCategoryId != $categoryId && $oldCategoryId == 0) {
                     //更新之前的 分类的数量跟 文章的 idname 数组
                     $flag = 'remove';
-                    Category::updateCategoryTagCountIdname($oldCategorieId, $postId, $postTitle, $flag);
+                    Category::updateCategoryTagCountIdname($oldCategoryId, $postId, $postTitle, $flag);
                     //更新当前的分类的id  文章的 idname 数组
                     $flag = 'add';
                     Category::updateCategoryTagCountIdname($categoryId, $postId, $postTitle, $flag);
@@ -237,7 +212,7 @@ class Post extends ActiveRecord
                 //之前 计入 现在不计入  需要把之前的 分类 count-1 idname 数组移除
                 //更新之前的 分类的数量跟 文章的 idname 数组
                 $flag = 'remove';
-                Category::updateCategoryTagCountIdname($oldCategorieId, $postId, $postTitle, $flag);
+                Category::updateCategoryTagCountIdname($oldCategoryId, $postId, $postTitle, $flag);
             }
         }
         return true;
@@ -251,6 +226,7 @@ class Post extends ActiveRecord
      * @param bool $beforeCount
      * @param bool $afterCount
      * @return bool
+     * @todo 需要修改成  如果是隐藏的情况下 不修改标签的数量值 还有idname 数组
      */
     public function insertTags($tags, $beforeCount = true, $afterCount = true)
     {
@@ -278,10 +254,13 @@ class Post extends ActiveRecord
         foreach ($tags as $tag) {
             //更新当前的分类的id  文章的 idname 数组
             //需要获取tag的id
-            $flag = 'add';
             $id = Tag::getTagIdByTagName($tag);
+            if($afterCount){
+                //如果 修改之后改为 公开的话
+                $flag = 'add';
+                Tag::updateCategoryTagCountIdname($id, $postId, $postTitle, $flag);
+            }
             $tagArr[] = ['id' => $id, 'name' => $tag];
-            Tag::updateCategoryTagCountIdname($id, $postId, $postTitle, $flag);
         }
         if (!empty($tagArr)) {
             $this->updatePostTags($postId, $tagArr);
@@ -324,11 +303,47 @@ class Post extends ActiveRecord
      */
     public function afterDelete()
     {
-        return true;
         parent::afterDelete();
-        $this->deleteCategories($this->status == static::STATUS_PUBLISH);
+        $this->deleteCategory($this->status == static::STATUS_PUBLISH);
         $this->deleteTags($this->status == static::STATUS_PUBLISH);
-        $this->deleteAttachments();
+//      $this->deleteAttachments();
+    }
+
+    /**
+     * 更新分类数组
+     * @access public
+     * @param $isPublic  标志是不是公开的文章
+     * @todo 如果是公开的文章  需要修改 category的 count-1 还有 删除idname
+     * @return boolean
+     */
+    public function deleteCategory($isPublic)
+    {
+        if ($isPublic) {
+            //更新之前的 分类的数量跟 文章的 idname 数组
+            $flag = 'remove';
+            Category::updateCategoryTagCountIdname($this->category_id, $this->id, $this->title, $flag);
+        }
+        return true;
+    }
+
+    /**
+     * 更新分类数组
+     * @access public
+     * @param $isPublic  标志是不是公开的文章
+     * @todo 如果是公开的文章  需要修改 category的 count-1 还有 删除idname
+     * @return boolean
+     */
+    public function deleteTags($isPublic)
+    {
+        $tags = $this->tags;
+        if ($isPublic) {
+            //更新之前的 分类的数量跟 文章的 idname 数组
+            foreach ($tags as $v) {
+                $flag = 'remove';
+                Tag::updateCategoryTagCountIdname($v['id'], $this->id, $this->title, $flag);
+            }
+        }
+        return true;
     }
 
 

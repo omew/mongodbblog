@@ -8,14 +8,13 @@ use backend\widgets\BootstrapDatetimePicker;
 /* @var $model common\models\Content */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-
-<div class="content-form">
+<div class="page-form">
     <?php $form = ActiveForm::begin(); ?>
     <div class="col-md-9">
         <?= $form->field($model, 'title') ?>
         <?= $form->field($model, 'text')->widget('yidashi\markdown\Markdown', ['language' => 'zh']); ?>
         <div class="form-group">
-            <?= Html::submitButton('发布文章', ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton('发布页面', ['class' => 'btn btn-primary']) ?>
         </div>
     </div><!-- post -->
     <div class="col-md-3">
@@ -34,22 +33,20 @@ use backend\widgets\BootstrapDatetimePicker;
         ]) ?>
         <div class="tab-content">
             <div id="options" class="tab-pane active">
-                <?= BootstrapDatetimePicker::widget([
-                    'model' => $model,
-                    'attribute' => 'created'
-                ]) ?>
-                <?= \common\widgets\CategoryCheckboxList::widget(['category_id' => $model->category_id]) ?>
-                <?= \backend\widgets\TagsEdit::widget([
-                    'name' => 'inputTags[]',
-                    'tags' => $model->isNewRecord ? [] : $model->tags,
-                ]) ?>
+                <?= $form->field($model, 'slug') ?>
+                <?=BootstrapDatetimePicker::widget([
+                    'model'=>$model,
+                    'attribute'=>'created'
+                ])?>
+                <?= $form->field($model, 'order') ?>
                 <?= $form->field($model, 'status')->dropDownList([
-                    Content::STATUS_PUBLISH => '公开',
-                    Content::STATUS_HIDDEN => '隐藏',
-                ]) ?>
+                    Content::STATUS_PUBLISH=>'公开',
+                    Content::STATUS_HIDDEN=>'隐藏',
+                ],['id'=>'visibility']) ?>
                 <?= $form->field($model, 'allowComment')->checkbox() ?>
                 <?= $form->field($model, 'allowPing')->checkbox() ?>
                 <?= $form->field($model, 'allowFeed')->checkbox() ?>
+
             </div>
             <div id="files" class="tab-pane">
                 <!----><? //= \backend\widgets\Plupload::widget([

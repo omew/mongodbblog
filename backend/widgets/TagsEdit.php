@@ -25,8 +25,8 @@ class TagsEdit extends yii\base\Widget{
         if($this->tags){
             foreach($this->tags as $v){
                 $this->_html.='<div class="label label-default">
-<input name="'.$this->name.'" type="hidden" value="'.$v->name.'"/>
-'.$v->name.'<span class="glyphicon glyphicon-remove"></span></div>';
+<input name="'.$this->name.'" type="hidden" value="'.$v['name'].'"/>
+'.$v['name'].'<span class="glyphicon glyphicon-remove"></span></div>';
             }
         }
         $this->_html.='</div>';

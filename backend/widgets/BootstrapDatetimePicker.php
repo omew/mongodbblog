@@ -14,45 +14,32 @@ class BootstrapDatetimePicker extends Widget
 
 
     public $model;
-
     public $attribute;
-
     public $name = 'datetime';
     public $value;
-
     public $options;
-
     public $locale = 'zh-cn';
-
     public $dateFormat = 'YYYY-MM-DD HH:mm';
-
     private $_inputStr;
 
     public function init()
     {
-
         parent::init();
-
-
         $this->_inputStr = '<div class="form-group">';
-
         if ($this->hasModel()) {
             $this->_inputStr .= Html::activeLabel($this->model, $this->attribute);
         } else {
             $this->_inputStr .= Html::label($this->name);
         }
         $this->_inputStr .= '<div id="' . Html::encode($this->name) . '" class="input-group date">';
-
         if ($this->hasModel()) {
             $value = Html::getAttributeValue($this->model, $this->attribute);
         } else {
             $value = $this->value;
         }
         if ($value !== null) {
-            $value = Yii::$app->formatter->asDatetime($value);
+            $value = Yii::$app->formatter->asDatetime($value,$this->dateFormat);
         }
-
-
         $options = $this->options;
         $options['class'] = 'form-control';
         //$options['readonly'] = '';
@@ -64,14 +51,11 @@ class BootstrapDatetimePicker extends Widget
             $this->_inputStr .= Html::textInput($this->name, $this->value, $options);
         }
 
-        $this->_inputStr .= '<span class="input-group-addon">
-                                        <span class="glyphicon-calendar glyphicon"></span>
-                                    </span>
-                                </div>
-                                </div>
-                                ';
-
-
+        $this->_inputStr .= ' <span class="input-group-addon">
+                                <span class="glyphicon-calendar glyphicon"></span>
+                              </span>
+                             </div>
+                            </div>';
     }
 
 

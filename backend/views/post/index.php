@@ -11,43 +11,47 @@ use yii\helpers\ArrayHelper;
 $this->title = '文章';
 ?>
 <div class="content-index">
-
     <p>
         <?= Html::a('新增', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-
-<!--    --><?//= GridView::widget([
-//        'dataProvider' => $dataProvider,
-//        'columns' => [
-//            ['class' => \yii\grid\CheckboxColumn::className()],
-//            [
-//                'header'=>'标题',
-//                'class' => yii\grid\Column::className(),
-//                'content'=>function ($model, $key, $index, $column){
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            ['class' => \yii\grid\CheckboxColumn::className()],
+            [
+                'header' => '标题',
+                'class' => yii\grid\Column::className(),
+                'content' => function ($model, $key, $index, $column) {
 //                    return $model->title.'&nbsp;'.Html::a('<span class="glyphicon glyphicon-link"></span>',Yii::$app->frontendUrlManager->createUrl(['site/post','id'=>$key]),['target'=>'_blank','title'=>'查看']);
-//                }
-//            ],
-//            [
-//                'attribute'=>'authorId',
-//                'value'=>function($model){
-//                    return $model->author==null?'-':$model->author->screenName;
-//                },
-//            ],
-//            [
-//                'label'=>'分类',
-//                'value'=>function($model){
-//                    $names= ArrayHelper::getColumn(ArrayHelper::toArray($model->categories),'name');
-//                    return implode(' ',$names);
-//                },
-//            ],
-//            'created:datetime',
-//
-//            [
-//                'class' => 'yii\grid\ActionColumn',
-//                'template'=>'{update} {delete}',
-//            ],
-//        ],
-//        'tableOptions'=>['class' => 'table table-striped']
-//    ]); ?>
+                    return $model->title;
+                }
+            ],
+            ['label' => '作者', 'value' => 'authorName'],
+            ['label' => '分类', 'value' => 'category_name'],
+            [
+                'label' => '标签',
+                'value' => function ($model) {
+                    $tags = $model->tags;
+                    $names = ArrayHelper::getColumn($tags, 'name');
+                    return implode(' ', $names);
+                },
+            ],
+            [
+                'label' => '发布时间',
+                'value' => function ($model) {
+                    if ($model->created) {
+                        return Yii::$app->formatter->asDatetime($model->created, 'php:Y-m-d');
+                    } else {
+                        return '';
+                    }
+                },
+            ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{update} {delete}',
+            ],
+        ],
+        'tableOptions' => ['class' => 'table table-striped']
+    ]); ?>
 
 </div>
