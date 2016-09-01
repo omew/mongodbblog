@@ -1,6 +1,8 @@
 <?php
 namespace backend\controllers;
 
+use common\models\Page;
+use common\models\Post;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -32,7 +34,18 @@ class SiteController extends BaseController
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        //总的发布的文章数量
+        $postCount = Post::find()->count();
+        //总的发布的单独的页面数量
+        $pageCount = Page::find()->count();
+        //还需要获取评论信息  这块需要改成 用 activeQuery 的形式获取
+//        $posts = Post::find()->select(['id','title','created'])->orderBy(['id' => SORT_DESC])->limit(5)->all();
+        return $this->render('index',
+            [
+                'pageCount' => $pageCount,
+                'postCount' => $postCount,
+            ]
+        );
     }
 
     /**
@@ -67,43 +80,19 @@ class SiteController extends BaseController
         return $this->goHome();
     }
 
-
     /**
-     * 上传文件
-     * @return array
+     * 个人信息完善操作
+     * @access public
      */
-    public function actionUpload()
+    public function actionProfile()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        //error ['err'=>1,'msg'=>'error message']
-        //success ['err'=>0,'msg'=>'success message','data'=>['id'=>'','name'=>'','url'=>'','isImage'=>'']]
-        $upload = new Upload([
-            'savePath' => Attachment::SAVE_PATH,
-        ]);
-        if ($upload->checkFileInfoAndSave()) {
-            //保存到数据库
-            $attachment = new Attachment();
-            $attachment->title = $upload->originalFileName;
-            $attachment->text = [
-                'name' => Html::encode($upload->originalFileName),
-                'path' => Yii::getAlias(Attachment::WEB_URL . $upload->saveRelativePath),
-                'minetype' => $upload->fileMimeType,
-                'ext' => $upload->fileExt,
-                'size' => $upload->filesize,
-            ];
-            $attachment->save(false);
-            return [
-                'err' => 0,
-                'msg' => '上传成功',
-                'data' => [
-                    'id' => $attachment->cid,
-                    'name' => Html::encode($upload->originalFileName),
-                    'url' => Yii::getAlias(Attachment::WEB_URL . $upload->saveRelativePath),
-                    'isImage' => in_array($upload->fileMimeType, Attachment::$imageMineType),
-                ],
-            ];
-        } else {
-            return ['err' => 1, 'msg' => $upload->error];
+        $model = Yii::$app->user->identity;
+        $model->scenario = 'profile';
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['profile']);
+            }
         }
+        return $this->render('profile', ['model' => $model]);
     }
 }

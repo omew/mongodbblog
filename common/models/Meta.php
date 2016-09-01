@@ -6,10 +6,7 @@ use common\helpers\StringHelper;
 use common\queries\MetaQuery;
 use Yii;
 use yii\helpers\Html;
-
 /**
- * This is the model class for table "{{%metas}}".
- *
  * @property integer $mid
  * @property string $name
  * @property string $slug

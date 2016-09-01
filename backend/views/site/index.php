@@ -1,53 +1,51 @@
 <?php
 
-/* @var $this yii\web\View */
+$this->title = '网站概要';
 
-$this->title = 'My Yii Application';
 ?>
-<div class="site-index">
-
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <p class="lead">目前有 <em><?=$postCount?></em> 篇文章, 并有 <em>0</em> 条关于你的评论在 <em><?=$categoryCount?></em> 个分类中.</p>
+                <p class="lead">点击下面的链接快速开始:</p>
+                <div>
+                    <?=\yii\helpers\Html::a('撰写新文章',['/post/create'],['class'=>'btn btn-primary'])?>
+                    <?=\yii\helpers\Html::a('系统设置',['/option'],['class'=>'btn btn-primary'])?>
+                </div>
             </div>
         </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">最近发布的文章</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="list-unstyled">
+                    <?php foreach($recentPublishedPost as $post): ?>
+                        <li>
+                            <span class="pull-right"><?=Yii::$app->formatter->asDate($post->created,'MM.dd') ?></span>
+                            <?=\yii\helpers\Html::a($post->title,Yii::$app->frontendUrlManager->createUrl(['site/post','id'=>$post->cid]),['target'=>'_blank'])?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">最近得到的回复</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="list-unstyled">
+                    <li>todo</li>
 
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
