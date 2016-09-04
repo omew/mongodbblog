@@ -36,6 +36,10 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        //默认的 视图 view 继承
+        'view' => [
+            'class' => 'frontend\components\View',
+        ],
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,

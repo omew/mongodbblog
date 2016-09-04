@@ -1,6 +1,6 @@
 <?php
 /**
- * @author: mojifan [<https://github.com/mojifan>]
+ * @author: timelesszhuang [<https://github.com/timelesszhuang>]
  */
 
 namespace common\models;
@@ -9,7 +9,7 @@ use yii;
 use common\helpers\StringHelper;
 use common\queries\PostQuery;
 use yii\helpers\Html;
-USE Yii\MongoDB\ActiveRecord;
+USE yii\mongodb\ActiveRecord;
 
 
 /**
@@ -255,7 +255,7 @@ class Post extends ActiveRecord
             //更新当前的分类的id  文章的 idname 数组
             //需要获取tag的id
             $id = Tag::getTagIdByTagName($tag);
-            if($afterCount){
+            if ($afterCount) {
                 //如果 修改之后改为 公开的话
                 $flag = 'add';
                 Tag::updateCategoryTagCountIdname($id, $postId, $postTitle, $flag);
@@ -346,6 +346,12 @@ class Post extends ActiveRecord
         return true;
     }
 
+
+    public static function find()
+    {
+        //get_called_class 表示获取静态调用的类名
+        return new PostQuery(get_called_class(),[]);
+    }
 
     /**
      * 获取自增主键值

@@ -1,6 +1,6 @@
 <?php
 /**
- * @author: mojifan [<https://github.com/mojifan>]
+ * @author: timelesszhuang [<https://github.com/timelesszhuang>]
  */
 
 namespace backend\widgets;

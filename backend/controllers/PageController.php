@@ -22,7 +22,7 @@ class PageController extends BaseController
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Page::find(),
+            'query' => Page::find()->selectNoText()->orderById(),
         ]);
         return $this->render('index', [
             'dataProvider' => $dataProvider,

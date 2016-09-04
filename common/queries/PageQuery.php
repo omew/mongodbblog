@@ -1,29 +1,35 @@
 <?php
-
 /**
- * @author: timelesszhuang [<https://github.com/timelesszhuang>]
+ * Created by PhpStorm.
+ * User: timeless
+ * Date: 16-9-4
+ * Time: 上午10:51
  */
 
 namespace common\queries;
 
-use common\models\Post;
+
+use common\models\Page;
 use yii\mongodb\ActiveQuery;
 
-class PostQuery extends ActiveQuery
+class PageQuery extends ActiveQuery
 {
 
+    /**
+     *初始化 query
+     */
     public function init()
     {
         parent::init();
     }
 
     /**
-     * 选择字段  不包text 字段
+     * 选择没有 text 字段
      * @access public
      */
     public function selectNoText()
     {
-        $columns = (new Post())->attributes();
+        $columns = (new Page())->attributes();
         $key = array_search('text', $columns);
         if ($key !== false) {
             unset($columns[$key]);
@@ -34,13 +40,13 @@ class PostQuery extends ActiveQuery
 
     public function published()
     {
-        $this->andWhere(['status' => Post::STATUS_PUBLISH]);
+        $this->andWhere(['status' => Page::STATUS_PUBLISH]);
         return $this;
     }
 
     public function recentPublished($limit = 10)
     {
-        $this->andWhere(['status' => Post::STATUS_PUBLISH]);
+        $this->andWhere(['status' => Page::STATUS_PUBLISH]);
         $this->limit($limit);
         $this->orderBy(['id' => SORT_DESC]);
         return $this;
@@ -51,5 +57,6 @@ class PostQuery extends ActiveQuery
         $this->orderBy(['id' => SORT_DESC]);
         return $this;
     }
+
 
 }

@@ -22,7 +22,7 @@ class PostController extends BaseController
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Post::find(),
+            'query' => Post::find()->selectNoText()->orderById(),
         ]);
         return $this->render('index', [
             'dataProvider' => $dataProvider,

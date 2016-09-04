@@ -29,14 +29,17 @@ $this->title = '独立页面';
                 }
             ],
             'slug',
+            ['label' => '作者', 'value' => 'authorName'],
             [
-                'attribute' => 'author_name',
+                'label' => '发布时间',
                 'value' => function ($model) {
-                    return $model->authorName;
+                    if ($model->created) {
+                        return Yii::$app->formatter->asDatetime($model->created, 'php:Y-m-d');
+                    } else {
+                        return '';
+                    }
                 },
             ],
-            'created:datetime',
-
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{update} {delete}',

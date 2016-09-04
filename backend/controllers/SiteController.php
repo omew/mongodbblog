@@ -28,22 +28,20 @@ class SiteController extends BaseController
     }
 
     /**
-     * Displays homepage.
-     *
+     * 展现在首页
      * @return string
      */
     public function actionIndex()
     {
-        //总的发布的文章数量
-        $postCount = Post::find()->count();
-        //总的发布的单独的页面数量
-        $pageCount = Page::find()->count();
         //还需要获取评论信息  这块需要改成 用 activeQuery 的形式获取
-//        $posts = Post::find()->select(['id','title','created'])->orderBy(['id' => SORT_DESC])->limit(5)->all();
+        $posts = Post::find()->selectNoText()->recentPublished()->all();
         return $this->render('index',
             [
-                'pageCount' => $pageCount,
-                'postCount' => $postCount,
+                //总的发布的单独的页面数量
+                'pageCount' => Page::find()->count(),
+                //总的发布的文章数量
+                'postCount' => Post::find()->count(),
+                'posts' => $posts,
             ]
         );
     }

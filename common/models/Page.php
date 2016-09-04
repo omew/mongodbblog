@@ -5,6 +5,7 @@
 
 namespace common\models;
 
+use common\queries\PageQuery;
 use yii;
 use common\helpers\StringHelper;
 use yii\helpers\Html;
@@ -139,6 +140,15 @@ class Page extends ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
+    }
+
+
+    /**
+     * 返回 activequery 对象
+     */
+    public static function find()
+    {
+        return new PageQuery(get_called_class());
     }
 
 

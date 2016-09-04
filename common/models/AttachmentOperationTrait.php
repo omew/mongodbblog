@@ -1,7 +1,7 @@
 <?php
 namespace common\models;
 /**
- * @author: mojifan [<https://github.com/mojifan>]
+ * @author: timelesszhuang [<https://github.com/timelesszhuang>]
  */
 
 trait AttachmentOperationTrait

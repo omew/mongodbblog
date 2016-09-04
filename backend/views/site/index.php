@@ -7,11 +7,17 @@ $this->title = '网站概要';
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-body">
-                <p class="lead">目前有 <em><?=$postCount?></em> 篇文章, 并有 <em>0</em> 条关于你的评论在 <em><?=$categoryCount?></em> 个分类中.</p>
+                <!--<p class="lead">目前有 <em>-->
+                <? //=$postCount?><!--</em> 篇文章, 并有 <em>0</em> 条关于你的评论在 <em>-->
+                <? //=$categoryCount?><!--</em> 个分类中.</p>-->
+
+                <p class="lead">
+                    目前有 <em><?= $postCount ?></em> 篇文章, 并有 <em><?= $pageCount ?></em> 个独立页面
+                </p>
                 <p class="lead">点击下面的链接快速开始:</p>
                 <div>
-                    <?=\yii\helpers\Html::a('撰写新文章',['/post/create'],['class'=>'btn btn-primary'])?>
-                    <?=\yii\helpers\Html::a('系统设置',['/option'],['class'=>'btn btn-primary'])?>
+                    <?= \yii\helpers\Html::a('撰写新文章', ['/post/create'], ['class' => 'btn btn-primary']) ?>
+                    <?= \yii\helpers\Html::a('系统设置', ['/option'], ['class' => 'btn btn-primary']) ?>
                 </div>
             </div>
         </div>
@@ -25,10 +31,10 @@ $this->title = '网站概要';
             </div>
             <div class="panel-body">
                 <ul class="list-unstyled">
-                    <?php foreach($recentPublishedPost as $post): ?>
+                    <?php foreach ($posts as $post): ?>
                         <li>
-                            <span class="pull-right"><?=Yii::$app->formatter->asDate($post->created,'MM.dd') ?></span>
-                            <?=\yii\helpers\Html::a($post->title,Yii::$app->frontendUrlManager->createUrl(['site/post','id'=>$post->cid]),['target'=>'_blank'])?>
+                            <span class="pull-right"><?= Yii::$app->formatter->asDate($post->created, 'MM.dd') ?></span>
+                            <?= \yii\helpers\Html::a($post->title, Yii::$app->frontendUrlManager->createUrl(['site/post', 'id' => $post->id]), ['target' => '_blank']) ?>
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -42,8 +48,7 @@ $this->title = '网站概要';
             </div>
             <div class="panel-body">
                 <ul class="list-unstyled">
-                    <li>todo</li>
-
+                    <li>该功能暂未完成 待续</li>
                 </ul>
             </div>
         </div>
