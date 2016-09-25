@@ -34,9 +34,10 @@ AppAsset::register($this);
             <div class="col-sm-12">
                 <!-- start logo -->
                 <a class="branding" href="<?= \yii\helpers\Url::home() ?>"
-                   title="<?= \common\helpers\SiteHelper::getTitle() ?>"><img
-                        src="<?= \yii\helpers\Url::to('@web/image/logo.png') ?>"
-                        alt="<?= \common\helpers\SiteHelper::getTitle() ?>"></a>
+                   title="<?= \common\helpers\SiteHelper::getTitle() ?>">
+                    <img src="<?= \yii\helpers\Url::to('@web/public/image/logo1.png') ?>"
+                         alt="<?= \common\helpers\SiteHelper::getTitle() ?>">
+                </a>
                 <!-- end logo -->
                 <h2 class="text-hide"><?= \common\helpers\SiteHelper::getDescription() ?></h2>
             </div>

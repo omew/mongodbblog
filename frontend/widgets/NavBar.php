@@ -22,7 +22,7 @@ class NavBar extends Widget{
         $this->_htmlStr.='<li role="presentation" '.($this->active('site','index','')?'class="nav-current"':'').'>'.Html::a('首页',Url::home()).'</li>';
         if(!empty($pages)){
             foreach($pages as $page){
-                $this->_htmlStr.='<li role="presentation" '.($this->active('site','page',$page->slug)?'class="nav-current"':'').'>'.Html::a($page->title,['site/page','slug'=>$page->slug,$this->options]).'</li>';
+                $this->_htmlStr.='<li role="presentation" '.($this->active('site','page',$page->slug)?'class="nav-current"':'').'>'.Html::a($page->title,['site/page','id'=>$page->id,$this->options]).'</li>';
             }
         }
         $this->_htmlStr.='</ul>';

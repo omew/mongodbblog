@@ -6,6 +6,7 @@ use common\helpers\StringHelper;
 use common\queries\MetaQuery;
 use Yii;
 use yii\helpers\Html;
+
 /**
  * @property integer $mid
  * @property string $name
@@ -55,7 +56,7 @@ abstract class Meta extends \yii\mongodb\ActiveRecord
      */
     public function attributes()
     {
-        return ['_id', 'id', 'name', 'slug', 'type', 'description', 'count', 'order', 'parent'];
+        return ['_id', 'id', 'name', 'slug', 'type', 'post', 'description', 'count', 'order', 'parent'];
     }
 
     /**
@@ -109,20 +110,11 @@ abstract class Meta extends \yii\mongodb\ActiveRecord
         return new MetaQuery(get_called_class(), ['metaType' => static::TYPE]);
     }
 
-    /**
-     *
-     */
-    public function getPosts($isPublished = true)
-    {
-        $query = $this->hasMany(Post::className(), ['cid' => 'cid'])->with('categories')->with('tags')->with('author')->orderByCid();
-        if ($isPublished) {
-            $query = $query->published();
-        }
-        return $query->viaTable(Relationship::tableName(), ['mid' => 'mid']);
-    }
+
 
     /**
-     *
+     * @param bool $insert
+     * @return bool
      */
     public function beforeSave($insert)
     {

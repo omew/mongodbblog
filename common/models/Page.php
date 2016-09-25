@@ -9,7 +9,6 @@ use common\queries\PageQuery;
 use yii;
 use common\helpers\StringHelper;
 use yii\helpers\Html;
-USE Yii\MongoDB\ActiveRecord;
 
 
 /**
@@ -19,7 +18,7 @@ USE Yii\MongoDB\ActiveRecord;
  * @property int _id
  * @property mixed postId
  */
-class Page extends ActiveRecord
+class Page extends yii\mongodb\ActiveRecord
 {
 //    use AttachmentOperationTrait;
     const STATUS_PUBLISH = 'publish';

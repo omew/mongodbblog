@@ -350,7 +350,21 @@ class Post extends ActiveRecord
     public static function find()
     {
         //get_called_class 表示获取静态调用的类名
-        return new PostQuery(get_called_class(),[]);
+        return new PostQuery(get_called_class(), []);
+    }
+
+    /**
+     * 获取制定 id 的文章
+     * @param $postidArr
+     * @param bool $isPublished
+     */
+    public static function getPosts($postidArr, $isPublished = true)
+    {
+//        print_r($postidArr);
+        $collection = Yii::$app->mongodb->getCollection('post');
+        //返回的 数据为cursor 数据
+        $post = $collection->find(['id' => ['$in' => $postidArr]]);
+        return $post->toArray();
     }
 
     /**
